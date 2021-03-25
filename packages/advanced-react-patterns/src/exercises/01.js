@@ -7,13 +7,7 @@ import { Switch } from '../switch'
 
 class Toggle extends React.Component {
   // 🐨 this toggle component is going to need to have state for `on`
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      on: false,
-    }
-  }
+  state = { on: false }
 
   // You'll also want a method to handle when the switch is clicked
   // which will update the `on` state and call the `onToggle` prop
@@ -25,9 +19,10 @@ class Toggle extends React.Component {
   //
   // 💯 Use a state updater function for `newState` to avoid issues with batching
   handleToggle = () => {
-    this.setState({ on: !this.state.on }, () => {
-      this.props.onToggle(this.state.on)
-    })
+    this.setState(
+      (currentState) => ({ on: !currentState.on }),
+      () => this.props.onToggle(this.state.on),
+    )
   }
 
   render() {
