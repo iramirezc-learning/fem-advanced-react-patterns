@@ -4,24 +4,40 @@ import React from 'react'
 import { Switch } from '../switch'
 
 class Toggle extends React.Component {
+  state = { on: false }
+
+  toggle = () => {
+    this.setState(
+      ({ on }) => ({ on: !on }),
+      () => this.props.onToggle(this.state.on),
+    )
+  }
+
   // you can create function components as static properties!
   // for example:
   // static Candy = (props) => <div>CANDY! {props.children}</div>
   // Then that could be used like: <Toggle.Candy />
   // This is handy because it makes the relationship between the
   // parent Toggle component and the child Candy component more explicit
+  //
   // 🐨 You'll need to create three such components here: On, Off, and Button
   //    The button will be responsible for rendering the <Switch /> (with the right props)
+  //
   // 💰 Combined with changes you'll make in the `render` method, these should
   //    be able to accept `on`, `toggle`, and `children` as props.
   //    Note that they will _not_ have access to Toggle instance properties
   //    like `this.state.on` or `this.toggle`.
-  state = { on: false }
-  toggle = () =>
-    this.setState(
-      ({ on }) => ({ on: !on }),
-      () => this.props.onToggle(this.state.on),
-    )
+
+  static On = (props) =>
+    props.on === true ? <div>{props.children}</div> : null
+
+  static Off = (props) =>
+    props.on === false ? <div>{props.children}</div> : null
+
+  static Button = ({ on, toggle }) => (
+    <Switch on={on} onClick={toggle} />
+  )
+
   render() {
     // we're trying to let people render the components they want within the Toggle component.
     // But the On, Off, and Button components will need access to the internal `on` state as
@@ -34,7 +50,15 @@ class Toggle extends React.Component {
     //
     // 🐨 you'll want to completely replace the code below with the above logic.
     const { on } = this.state
-    return <Switch on={on} onClick={this.toggle} />
+
+    return React.Children.map(this.props.children, (child) => {
+      const props =
+        typeof child.type === 'string'
+          ? {}
+          : { on, toggle: this.toggle }
+
+      return React.cloneElement(child, props)
+    })
   }
 }
 
