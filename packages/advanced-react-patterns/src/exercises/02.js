@@ -28,11 +28,9 @@ class Toggle extends React.Component {
   //    Note that they will _not_ have access to Toggle instance properties
   //    like `this.state.on` or `this.toggle`.
 
-  static On = (props) =>
-    props.on === true ? <div>{props.children}</div> : null
+  static On = (props) => (props.on === true ? props.children : null)
 
-  static Off = (props) =>
-    props.on === false ? <div>{props.children}</div> : null
+  static Off = (props) => (props.on === false ? props.children : null)
 
   static Button = ({ on, toggle }) => (
     <Switch on={on} onClick={toggle} />
@@ -53,9 +51,9 @@ class Toggle extends React.Component {
 
     return React.Children.map(this.props.children, (child) => {
       const props =
-        typeof child.type === 'string'
-          ? {}
-          : { on, toggle: this.toggle }
+        typeof child.type !== 'string'
+          ? { on, toggle: this.toggle }
+          : {}
 
       return React.cloneElement(child, props)
     })
