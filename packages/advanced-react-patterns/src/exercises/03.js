@@ -64,14 +64,14 @@ const withContext = (callback) => {
 }
 
 class Toggle extends React.Component {
-  state = { on: false }
-
   toggle = () => {
     this.setState(
       ({ on }) => ({ on: !on }),
       () => this.props.onToggle(this.state.on),
     )
   }
+
+  state = { on: false, toggle: this.toggle }
 
   // 🐨 each of these compound components will need to be changed to use
   // ToggleContext.Consumer and rather than getting `on` and `toggle`
@@ -97,8 +97,6 @@ class Toggle extends React.Component {
   )
 
   render() {
-    const { on } = this.state
-
     // Because this.props.children is _immediate_ children only, we need
     // to 🐨 remove this map function and render our context provider with
     // this.props.children as the children of the provider. Then we'll
@@ -106,7 +104,7 @@ class Toggle extends React.Component {
     // value (the value prop).
 
     return (
-      <ToggleContext.Provider value={{ on, toggle: this.toggle }}>
+      <ToggleContext.Provider value={this.state}>
         {this.props.children}
       </ToggleContext.Provider>
     )
