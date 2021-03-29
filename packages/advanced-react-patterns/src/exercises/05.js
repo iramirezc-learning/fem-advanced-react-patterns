@@ -5,11 +5,14 @@ import { Switch } from '../switch'
 
 class Toggle extends React.Component {
   state = { on: false }
-  toggle = () =>
+
+  toggle = () => {
     this.setState(
       ({ on }) => ({ on: !on }),
       () => this.props.onToggle(this.state.on),
     )
+  }
+
   getStateAndHelpers() {
     return {
       on: this.state.on,
@@ -23,6 +26,10 @@ class Toggle extends React.Component {
       // 🐨 Add a `togglerProps` object that has an `aria-pressed` (should
       // be set to the value of the `on` state), and an `onClick` assigned
       // to the toggle function.
+      togglerProps: {
+        'aria-pressed': this.state.on,
+        onClick: this.toggle,
+      },
     }
   }
   render() {
