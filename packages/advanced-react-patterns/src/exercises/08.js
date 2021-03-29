@@ -41,25 +41,11 @@ class Toggle extends React.Component {
   // - updater: (changes object or function that returns the changes object)
   // - callback: Function called after the state has been updated
   internalSetState = (updater, callback) => {
-    // 🐨 This will call setState with an updater function (a function that receives the state).
     this.setState((currentState) => {
-      // If the changes are a function, then call that function with the state to get the actual changes
-      const changes =
-        typeof updater === 'function'
-          ? updater(currentState)
-          : updater
-
-      // 🐨 Call this.props.stateReducer with the `state` and `changes` to get the user changes.
-      const newState = this.props.stateReducer(currentState, changes)
-
-      // 🐨 Then, if the returned value exists and has properties, return that from your updater function.
-      // If it does not exist or is an empty object, then return null (avoids an unnecessary re-render).
-      return typeof newState === 'object' &&
-        Object.keys(newState).length > 0
-        ? newState
-        : null
-
-      // 🐨 Pass the callback to the 2nd argument to this.setState
+      return [updater]
+        .map((u) => (typeof u === 'function' ? u(currentState) : u))
+        .map((u) => this.props.stateReducer(currentState, u) || {})
+        .map((u) => (Object.keys(u).length > 0 ? u : null))[0]
     }, callback)
   }
 
