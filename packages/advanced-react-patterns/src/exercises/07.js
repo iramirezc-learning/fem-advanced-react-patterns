@@ -14,16 +14,20 @@ class Toggle extends React.Component {
     onReset: () => {},
   }
 
+  initialState = {
+    on: this.props.initialOn,
+  }
+
   // 🐨 Rather than initializing state to have on as false,
   // set on to this.props.initialOn
-  state = { on: this.props.initialOn }
+  state = this.initialState
 
   // 🐨 now let's add a reset method here that resets the state
   // to the initial state. Then add a callback that calls
   // this.props.onReset with the `on` state.
   reset = () => {
     this.setState(
-      { on: Toggle.defaultProps.initialOn },
+      this.initialState,
       () => this.props.onReset && this.props.onReset(this.state.on),
     )
   }
