@@ -13,6 +13,11 @@ class Toggle extends React.Component {
     stateReducer: (state, changes) => changes,
   }
 
+  static stateChangeTypes = {
+    reset: 'reset',
+    toggle: 'toggle',
+  }
+
   initialState = { on: this.props.initialOn }
 
   state = this.initialState
@@ -30,7 +35,7 @@ class Toggle extends React.Component {
       // property and return an object only if the state changes
       // 💰 to remove the `type`, you can destructure the changes:
       // `{type, ...c}`
-      const { type, ...newState } = reducedChanges
+      const { type: ignoredType, ...newState } = reducedChanges
 
       return Object.keys(newState).length ? newState : null
     }, callback)
@@ -39,12 +44,12 @@ class Toggle extends React.Component {
   reset = () =>
     // 🐨 add a `type` string property to this call
     this.internalSetState(
-      { ...this.initialState, type: 'reset' },
+      { ...this.initialState, type: Toggle.stateChangeTypes.reset },
       () => this.props.onReset(this.state.on),
     )
 
   // 🐨 accept a `type` property here and give it a default value
-  toggle = ({ type = 'toggle' } = {}) => {
+  toggle = ({ type = Toggle.stateChangeTypes.toggle } = {}) => {
     this.internalSetState(
       // pass the `type` string to this object
       ({ on }) => ({ on: !on, type }),
