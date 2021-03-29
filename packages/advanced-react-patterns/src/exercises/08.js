@@ -50,13 +50,13 @@ class Toggle extends React.Component {
           : updater
 
       // 🐨 Call this.props.stateReducer with the `state` and `changes` to get the user changes.
-      const result = this.props.stateReducer(currentState, changes)
+      const newState = this.props.stateReducer(currentState, changes)
 
       // 🐨 Then, if the returned value exists and has properties, return that from your updater function.
       // If it does not exist or is an empty object, then return null (avoids an unnecessary re-render).
-      return typeof result === 'object' &&
-        Object.keys(result).length > 0
-        ? result
+      return typeof newState === 'object' &&
+        Object.keys(newState).length > 0
+        ? newState
         : null
 
       // 🐨 Pass the callback to the 2nd argument to this.setState
