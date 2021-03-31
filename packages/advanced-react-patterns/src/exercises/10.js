@@ -23,10 +23,16 @@ class Toggle extends React.Component {
   // whether it's coming from this.state or this.props
   // Call it `getState` and have it return on from
   // state if it's not controlled or props if it is.
+  //
+  // 💯 Make the `getState` function generic enough to support all state in
+  // `this.state` even if we add any number of properties to state.
   getState = () => {
-    return {
-      on: this.isControlled('on') ? this.props.on : this.state.on,
-    }
+    return Object.keys(this.state).reduce((state, prop) => {
+      state[prop] = this.isControlled(prop)
+        ? this.props[prop]
+        : this.state[prop]
+      return state
+    }, {})
   }
 
   toggle = () => {
@@ -54,8 +60,7 @@ class Toggle extends React.Component {
 
 // These extra credit ideas are to expand this solution to elegantly handle
 // more state properties than just a single `on` state.
-// 💯 Make the `getState` function generic enough to support all state in
-// `this.state` even if we add any number of properties to state.
+
 // 💯 Add support for an `onStateChange` prop which is called whenever any
 // state changes. It should be called with `changes` and `state`
 // 💯 Add support for a `type` property in the `changes` you pass to
