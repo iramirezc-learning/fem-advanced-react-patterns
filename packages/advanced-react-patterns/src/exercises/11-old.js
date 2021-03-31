@@ -94,6 +94,6 @@ function Usage({
 }
 */
 
-Usage.title = 'The Provider Pattern'
+Usage.title = 'Provider Pattern (old)'
 
 export { Toggle, Usage as default }
