@@ -7,7 +7,12 @@ import { Switch } from '../switch'
 // you'll need to provide a default value. Might I suggest
 // an object with default values for all the properties
 // of our render prop?
-const ToggleContext = React.createContext({ on: false })
+const ToggleContext = React.createContext({
+  on: false,
+  reset: () => {},
+  toggle: () => {},
+  getTogglerProps: () => {},
+})
 
 const callAll = (...fns) => (...args) =>
   fns.forEach((fn) => fn && fn(...args))
@@ -155,15 +160,16 @@ class Toggle extends React.Component {
     // NOTE: this actually breaks the render prop API. We could preserve
     // it but I didn't want to add any more complexity to this.
     // 💯 Feel free to try to preserve the existing render prop API if you want.
-    if (typeof this.props.children === 'function') {
-      return this.props.children(this.state)
-    } else {
-      return (
-        <ToggleContext.Provider value={this.state}>
-          {this.props.children}
-        </ToggleContext.Provider>
-      )
-    }
+    const children =
+      typeof this.props.children === 'function'
+        ? this.props.children(this.state)
+        : this.props.children
+
+    return (
+      <ToggleContext.Provider value={this.state}>
+        {children}
+      </ToggleContext.Provider>
+    )
   }
 }
 
