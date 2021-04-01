@@ -3,7 +3,11 @@ import hoistNonReactStatics from 'hoist-non-react-statics'
 import * as redux from 'redux'
 import { Switch } from '../switch'
 
-const RenduxContext = React.createContext({})
+const RenduxContext = React.createContext({
+  state: {},
+  reset: () => {},
+  dispatch: () => {},
+})
 
 class Rendux extends React.Component {
   static Consumer = RenduxContext.Consumer
@@ -51,9 +55,14 @@ class Rendux extends React.Component {
   }
 
   render() {
+    const children =
+      typeof this.props.children === 'function'
+        ? this.props.children(this.state)
+        : this.props.children
+
     return (
       <RenduxContext.Provider value={this.state}>
-        {this.props.children(this.state)}
+        {children}
       </RenduxContext.Provider>
     )
   }
