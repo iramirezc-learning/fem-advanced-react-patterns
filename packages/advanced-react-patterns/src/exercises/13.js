@@ -1,27 +1,37 @@
 import React from 'react'
-// import hoistNonReactStatics from 'hoist-non-react-statics'
+import hoistNonReactStatics from 'hoist-non-react-statics'
 import * as redux from 'redux'
 import { Switch } from '../switch'
 
+const RenduxContext = React.createContext({})
+
 class Rendux extends React.Component {
+  static Consumer = RenduxContext.Consumer
+
   // I'll give you some of this because it's kinda redux-specific stuff
   static defaultProps = {
     initialState: {},
     reducer: (state) => state,
   }
+
   initialReduxState = this.props.initialState
+
   rootReducer = (state, action) => {
     if (action.type === '__RENDUX_RESET__') {
       return this.initialReduxState
     }
+
     return this.props.reducer(state, action)
   }
+
   store = redux.createStore(this.rootReducer, this.initialReduxState)
+
   reset = () => {
     this.store.dispatch({
       type: '__RENDUX_RESET__',
     })
   }
+
   componentDidMount() {
     this.unsubscribe = this.store.subscribe(() =>
       this.setState({
@@ -29,18 +39,42 @@ class Rendux extends React.Component {
       }),
     )
   }
+
   componentWillUnmount() {
     this.unsubscribe()
   }
+
+  state = {
+    state: this.initialReduxState,
+    reset: this.reset,
+    dispatch: this.store.dispatch,
+  }
+
   render() {
-    // this is your job!
-    return 'todo'
+    return (
+      <RenduxContext.Provider value={this.state}>
+        {this.props.children(this.state)}
+      </RenduxContext.Provider>
+    )
   }
 }
 
-function withRendux() {
-  // this is your job too!
-  return () => null
+function withRendux(Component) {
+  function Wrapper(props, ref) {
+    return (
+      <Rendux.Consumer>
+        {(rendux) => (
+          <Component rendux={rendux} {...props} ref={ref} />
+        )}
+      </Rendux.Consumer>
+    )
+  }
+
+  Wrapper.displayName = `withRendux(${
+    Component.displayName || Component.name
+  })`
+
+  return hoistNonReactStatics(React.forwardRef(Wrapper), Component)
 }
 
 /////////////////////////////////////////////////////////
