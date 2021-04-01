@@ -18,6 +18,7 @@ const files = [
   '11-old',
   '11',
   '12',
+  '13',
 ]
 
 const pages = files.reduce((p, filename, index, fullArray) => {
